@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ADT_A01>
+<MSH>
+<MSH.1>|</MSH.1>
+<MSH.2>^~\&amp;</MSH.2>
+<MSH.3>
+						<HD.1>AURORA</HD.1>
+				</MSH.3>
+<MSH.4>
+						<HD.1>AURORA</HD.1>
+				</MSH.4>
+<MSH.5>
+						<HD.1>GRIFOLS</HD.1>
+				</MSH.5>
+<MSH.6>
+						<HD.1>GRIFOLS</HD.1>
+				</MSH.6>
+<MSH.7>
+						<TS.1>20100208122132</TS.1>
+				</MSH.7>
+<MSH.9>
+						<MSG.1>ADT</MSG.1>
+						<MSG.2>A01</MSG.2>
+				</MSH.9>
+<MSH.10>20100208123455339</MSH.10>
+<MSH.11>
+						<PT.1>P</PT.1>
+				</MSH.11>
+<MSH.12>
+<VID.1>2.5</VID.1>
+</MSH.12>
+</MSH>
+<EVN>
+				<EVN.1>A01</EVN.1>
+				<EVN.2>
+						<TS.1>20100208122110</TS.1>
+				</EVN.2>
+		</EVN>
+<PID>
+<PID.2>
+						<CX.1>AN0246921884</CX.1>
+				</PID.2>
+<PID.3>
+						<CX.1>19985</CX.1>
+				</PID.3>
+<PID.4>
+<CX.1>29337718E</CX.1>
+</PID.4>
+<PID.5>
+<XPN.1>
+								<FN.1>PEREZ</FN.1>
+						</XPN.1>
+<XPN.2>RAMON</XPN.2>
+</PID.5>
+<PID.6>
+<XPN.1>
+<FN.1>JIMENEZ</FN.1>
+</XPN.1>
+</PID.6>
+<PID.7>
+						<TS.1>19370416</TS.1>
+				</PID.7>
+<PID.8>M</PID.8>
+<PID.11>
+<XAD.1>
+<SAD.1>C/ HERMANOS MONSALVES, 13</SAD.1>
+</XAD.1>
+<XAD.3>6267</XAD.3>
+<XAD.4>H</XAD.4>
+<XAD.5>21840</XAD.5>
+</PID.11>
+<PID.13>
+						<XTN.1>363084</XTN.1>
+				</PID.13>
+<PID.19>21/0007557900</PID.19>
+</PID>
+<PV1>
+<PV1.1>2255736</PV1.1>
+<PV1.2>I</PV1.2>
+<PV1.3>
+<PL.1>DR05</PL.1>
+<PL.2>510</PL.2>
+<PL.3>510-3</PL.3>
+<PL.4>
+								<HD.1>1</HD.1>
+						</PL.4>
+<PL.7>1</PL.7>
+</PV1.3>
+<PV1.5>
+						<CX.1>10001302</CX.1>
+				</PV1.5>
+<PV1.7>
+<XCN.1>521</XCN.1>
+<XCN.2>
+<FN.1>ANA M. GOMEZ GONZALEZ</FN.1>
+</XCN.2>
+<XCN.11>521</XCN.11>
+</PV1.7>
+<PV1.10>RES</PV1.10>
+<PV1.14>UR</PV1.14>
+<PV1.19>
+<CX.1>2255736</CX.1>
+</PV1.19>
+<PV1.44>
+						<TS.1>20100208122100</TS.1>
+				</PV1.44>
+</PV1>
+</ADT_A01>

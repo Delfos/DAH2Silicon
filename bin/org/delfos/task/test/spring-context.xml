@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="testFileGarbageCollector" class="org.seamlg.task.test.TestFileGarbageCollector">
+		<property name="dirs">
+			<map>
+				<entry>
+					<key>
+						<value><util:constant static-field="org.seamlg.task.test.TestFileGarbageCollector.EMPTY_DIR"/></value>
+					</key>
+					<ref bean="emptyDir" />
+				</entry>
+				<entry>
+					<key>
+						<value><util:constant static-field="org.seamlg.task.test.TestFileGarbageCollector.DIR1"/></value>
+					</key>
+					<ref bean="dir1" />
+				</entry>
+				<entry>
+					<key>
+						<value><util:constant static-field="org.seamlg.task.test.TestFileGarbageCollector.DIR2"/></value>
+					</key>
+					<ref bean="dir2" />
+				</entry>				
+			</map>
+		</property>
+	</bean>
+	
+	<bean id = "emptyDir" class = "java.io.File">
+		<constructor-arg type="java.lang.String" value="E:/novale/empty" />		
+	</bean>
+	<bean id = "dir1" class = "java.io.File">
+		<constructor-arg type="java.lang.String" value="E:/novale/dir1" />		
+	</bean>
+	<bean id = "dir2" class = "java.io.File">
+		<constructor-arg type="java.lang.String" value="E:/novale/dir2" />		
+	</bean>	
+
+</beans>
+

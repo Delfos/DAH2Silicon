@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/commons-io-1.3.2.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/junit-4.8.2.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/org.springframework.core-3.0.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/org.springframework.context-3.0.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/org.springframework.beans-3.0.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/org.springframework.asm-3.0.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/org.springframework.expression-3.0.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/hapi-0.5.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
