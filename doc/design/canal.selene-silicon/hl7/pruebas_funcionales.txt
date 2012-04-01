@@ -1,0 +1,59 @@
+PRU.01
+------
+
++ Escenario: Uno de los mensajes enviados por admisiones tiene una sintaxis incorrecta, es decir, no es un HL7 v.2.3
+	válido.
+
++ Resultado Esperado: Se procesan los mensajes correctos y se produce un error en el mensaje incorrecto. El mensaje
+	incorrecto se descarta y se guarda en el almacen de mensajes incorrectos.
+	
+PRU.02
+------
+
++ Escenario: Los mensajes enviados por admisiones son correctos y no se producen errores en el envío a Silicon
+
++ Resultado Esperado: Se procesan todos los mensajes y en el almacen de Ficheros de Censo Enviados se guardan todos
+	los mensajes HL7 que nos han llegado del censo.
+	
+PRU.03
+------
+
++ Escenario. Los mensajes enviados por admisiones son correctos pero se producen errores al enviarlos a Silicon.
+
++ Resultado Esperado: En el mensaje de error se para el canal para volver a intentar lanzar todos los mensajes
+	cuando se vuelva a ejecutar.
+	
+PRU. 04
+-------
+
++ Escenario. Envio de mensajes de ingreso (A01) a Silicon.
+
++ Resultado Esperado. Se ingresa el paciente en Silicon.
+
+PRU. 05
+-------
+
++ Escenario. Ficheros no válidos en el directorio donde admisiones deja los ficheros HL7.
+
++ Resultado Esperado. Los ficheros no válidos son eliminados.
+
+PRU. 06
+-------
+
++ Escenario. Envío de mensajes de alta (A03) a Silicon
+
++ Resultado Esperado. Se da de alta al paciente en Silicon.
+
+PRU. 07
+-------
+
++ Escenario. Envío de mensajes de anulaciones de alta (A13) a Silicon
+
++ Resultado Esperado. Se vuelve a ingresar al paciente.
+
+PRU. 08
+-------
+
++ Escenario. Envío de mensajes de traslados (A02) a Silicon
+
++ Resultado Esperado. Se traslada al paciente.

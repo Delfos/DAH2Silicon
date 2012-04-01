@@ -1,0 +1,75 @@
++ Admisiones deja los ficheros HL7 de movimientos del censo vía ftp en el directorio: $IP_GLOBALANALYST/censo_silicon
+
+	Usuario de conexión ftp para el envio del censo: censo/silicon
+	
++ Parametros del canal:
+
+	++ srcDir: directorio donde admisiones deja los ficheros HL7
+	++ errDir: directorio donde se envían los ficheros HL7 que no se han podido transformar en HL7-XML v2.3
+	++ procDir: directorio de procesado de ficheros HL7
+	++ hookDir: directorio donde se encuentra el fichero anzuelo
+	++ hookFile: fichero anzuelo. No puede tener la extensión "ADM" y ha de ser un HL7 válido
+	++ sendDir: directorio donde se dejan los mensajes enviados a Silicon
+		+++ Se guarda el censo HL7 de admisiones, el censo HL7-XML v2.3 y el censo HL7-XML v.2.5 de Silicon.
+	++ maxMsg: número máximo de mensajes que se procesan
+	++ admFilesExt: extensión de los ficheros de censo de admisiones
+	++ springConfFile: ruta al fichero de contexto de Spring
+	
++ Fichero de contexto de Spring
+
+	...
+	
+	<bean id="errorDir" class="java.io.File">
+		<constructor-arg type="java.lang.String" value="[<ruta_dir_ficheros_erroneos>]" />
+	</bean>
+	<bean id="sendDir" class="java.io.File">
+		<constructor-arg type="java.lang.String" value="[<ruta_dir_ficheros_enviados>]" />
+	</bean>
+
+	<bean id="fileGarbageCollector" class="org.seamlg.task.FileGarbageCollector">
+		<property name="maxAge">
+			<value>[<antiguedad_maxima_ficheros>]</value>
+		</property>
+	
+	...
+	
+	</bean>
+		
+	<bean id="scheduledTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<!-- wait 1 seconds before starting repeated execution -->
+		<property name="delay" value="[<tiempo_espera_primera_ejecucion>]" />
+		<!-- run every 5 seconds -->
+		<property name="period" value="[<periodo>]" />
+		<property name="timerTask" ref="fileGarbageCollector" />
+	</bean>
+	
+	...
+	
++ Configuración del CensoOnLine HL7 en Silicon
+
+	++ Fichero Silicon.properties
+	
+		+++ TIMER_MENSAJES_ENTRADA
+		+++ TIMER_MENSAJES_SALIDA
+		
+	++ Configuraciones -> Conexiones -> Mensajes
+	
+		+++ Activar Conexión con Admisiones/ETC = S
+		+++ Charset encoding para mensajería con Admisiones/ETC = UTF-8
+		+++ URL de acceso al webservice de Admisiones/ETC = URL de conexión al webservice de Mirth para el envío de 
+				mensajes a Admisiones/ETC (formato http://<host:port>/services/MirthReceptorSAPWS) o 
+				directorio donde se deben almacenar los mensajes para Admisiones/ETC (si el valor obtenido no sigue 
+				el formato propio de un webservice de Mirth, se interpretarà que es un directorio).
+		+++ Directorio de entrada de mensajes de Admisiones/ETC = Directorio donde se almacenan mensajes de entrada 
+				desde Admisiones/ETC cuando la mensajería por Mirth está fuera de servicio. Los mensajes se captan 
+				por ordenados por el nombre del fichero alfabéticamente y sólo se captan si el directorio está 
+				informado y el timer está activo.				
+		+++ Entrada. Tiempo maximo de procesado por mensaje = Valor por defecto 5000 ms.Tiempo máximo, expresado en 
+				milisegundos, destinado al procesamiento de un mensaje de entrada
+		+++ Salida. Tiempo maximo de procesado por mensaje = Valor por defecto 5000 ms.Tiempo máximo, expresado en 
+				milisegundos, destinado al procesamiento de un mensaje de salida 
+				
++ Configuración del destino de los mensajes de salida del censo.
+
+	Se configura en el parámetro: Configuraciones -> Conexiones -> Mensajes -> URL de acceso al webservice de 
+		Adminisiones/ETC
