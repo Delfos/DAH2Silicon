@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;delfos-mirth&apos; to &apos;canal_censo_selene-silicon&apos;" description="Rename resource &apos;delfos-mirth&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/delfos-mirth" name="canal_censo_selene-silicon" stamp="1333056398712" updateReferences="true"/>
+</session>
