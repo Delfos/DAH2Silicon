@@ -1,0 +1,341 @@
+<com.webreach.mirth.model.Channel>
+  <id>a2e1ea36-b468-48c3-87b6-7e6691101571</id>
+  <name>censo-silicon-hl7</name>
+  <description></description>
+  <enabled>true</enabled>
+  <version>1.7.1.3422</version>
+  <lastModified>
+    <time>1287157785510</time>
+    <timezone>Europe/Paris</timezone>
+  </lastModified>
+  <revision>209</revision>
+  <sourceConnector>
+    <name>sourceConnector</name>
+    <properties>
+      <property name="sortAttribute">name</property>
+      <property name="pollingType">interval</property>
+      <property name="pollingFrequency">1000</property>
+      <property name="binary">0</property>
+      <property name="processBatchFiles">0</property>
+      <property name="DataType">File Reader</property>
+      <property name="moveToErrorDirectory">E:/novale/error</property>
+      <property name="fileAge">600</property>
+      <property name="moveToPattern"></property>
+      <property name="charsetEncoding">DEFAULT_ENCODING</property>
+      <property name="checkFileAge">0</property>
+      <property name="autoDelete">0</property>
+      <property name="host">E:/novale/procdir</property>
+      <property name="fileFilter">*</property>
+      <property name="moveToDirectory"></property>
+    </properties>
+    <transformer>
+      <steps>
+        <com.webreach.mirth.model.Step>
+          <sequenceNumber>0</sequenceNumber>
+          <name>xmlMsg</name>
+          <script>//Convierte el HL7 v2.3 de adminisiones en HL7-XML v2.3
+var procDir = globalMap.get(&quot;procDir&quot;);
+var originalFilename = channelMap.get(&quot;originalFilename&quot;);	
+
+var msgRawData = messageObject.getRawData()
+var xmlMsg = SerializerFactory.getHL7Serializer(true, false, false).toXML(msgRawData);
+
+channelMap.put(&quot;xmlMsg&quot;, xmlMsg);
+FileUtil.write(procDir + &quot;/&quot; + originalFilename + &quot;.xml&quot;, false, xmlMsg);</script>
+          <type>JavaScript</type>
+          <data class="map">
+            <entry>
+              <string>Script</string>
+              <string>//Convierte el HL7 v2.3 de adminisiones en HL7-XML v2.3
+var procDir = globalMap.get(&quot;procDir&quot;);
+var originalFilename = channelMap.get(&quot;originalFilename&quot;);	
+
+var msgRawData = messageObject.getRawData()
+var xmlMsg = SerializerFactory.getHL7Serializer(true, false, false).toXML(msgRawData);
+
+channelMap.put(&quot;xmlMsg&quot;, xmlMsg);
+FileUtil.write(procDir + &quot;/&quot; + originalFilename + &quot;.xml&quot;, false, xmlMsg);</string>
+            </entry>
+          </data>
+        </com.webreach.mirth.model.Step>
+      </steps>
+      <inboundTemplate></inboundTemplate>
+      <outboundTemplate></outboundTemplate>
+      <inboundProtocol>HL7V2</inboundProtocol>
+      <outboundProtocol>HL7V2</outboundProtocol>
+      <inboundProperties>
+        <property name="handleRepetitions">false</property>
+        <property name="convertLFtoCR">true</property>
+        <property name="useStrictValidation">false</property>
+        <property name="useStrictParser">false</property>
+      </inboundProperties>
+      <outboundProperties/>
+    </transformer>
+    <filter>
+      <rules>
+        <com.webreach.mirth.model.Rule>
+          <sequenceNumber>0</sequenceNumber>
+          <name>channelStatus</name>
+          <data class="map">
+            <entry>
+              <string>Script</string>
+              <string>var originalFilename = channelMap.get(&quot;originalFilename&quot;);
+var controller = globalMap.get(&quot;controller&quot;);
+var extension = globalMap.get(&quot;admFilesExt&quot;);
+
+var str_originalFilename = new Packages.java.lang.String(originalFilename);
+var str_extension = new Packages.java.lang.String(extension);
+
+if(controller.hasErrors()){
+	return false;	
+}else if( !Packages.org.apache.commons.io.FilenameUtils.isExtension(str_originalFilename, str_extension) ) {
+	return false;
+}else if(messageObject.getType() == &quot;ADT-A17&quot;){
+	
+	var sendDir = globalMap.get(&quot;sendDir&quot;);	
+	var procDir = globalMap.get(&quot;procDir&quot;);
+
+	//controller.addError(-1);
+	Packages.org.delfos.mirth.utils.MirthFileUtils.moveFileToDirectory(procDir + &quot;/&quot; + originalFilename, sendDir);	
+	return false;	
+}else {
+	return true;
+}</string>
+            </entry>
+          </data>
+          <type>JavaScript</type>
+          <script>var originalFilename = channelMap.get(&quot;originalFilename&quot;);
+var controller = globalMap.get(&quot;controller&quot;);
+var extension = globalMap.get(&quot;admFilesExt&quot;);
+
+var str_originalFilename = new Packages.java.lang.String(originalFilename);
+var str_extension = new Packages.java.lang.String(extension);
+
+if(controller.hasErrors()){
+	return false;	
+}else if( !Packages.org.apache.commons.io.FilenameUtils.isExtension(str_originalFilename, str_extension) ) {
+	return false;
+}else if(messageObject.getType() == &quot;ADT-A17&quot;){
+	
+	var sendDir = globalMap.get(&quot;sendDir&quot;);	
+	var procDir = globalMap.get(&quot;procDir&quot;);
+
+	//controller.addError(-1);
+	Packages.org.delfos.mirth.utils.MirthFileUtils.moveFileToDirectory(procDir + &quot;/&quot; + originalFilename, sendDir);	
+	return false;	
+}else {
+	return true;
+}</script>
+          <operator>NONE</operator>
+        </com.webreach.mirth.model.Rule>
+      </rules>
+    </filter>
+    <transportName>File Reader</transportName>
+    <mode>SOURCE</mode>
+    <enabled>true</enabled>
+  </sourceConnector>
+  <destinationConnectors>
+    <com.webreach.mirth.model.Connector>
+      <name>SiliconWS</name>
+      <properties>
+        <property name="charsetEncoding">DEFAULT_ENCODING</property>
+        <property name="outputAppend">1</property>
+        <property name="DataType">File Writer</property>
+        <property name="outputPattern">${ORIGINALNAME}</property>
+        <property name="template">${xmlSiliconMsg}</property>
+        <property name="host">E:/novale/silicon</property>
+        <property name="binary">0</property>
+      </properties>
+      <transformer>
+        <steps>
+          <com.webreach.mirth.model.Step>
+            <sequenceNumber>0</sequenceNumber>
+            <name>_msg_type</name>
+            <script>var mapping;try { mapping = msg[&apos;MSH&apos;][&apos;MSH.9&apos;][&apos;MSH.9.1&apos;].toString() + &quot;^&quot; + msg[&apos;MSH&apos;][&apos;MSH.9&apos;][&apos;MSH.9.2&apos;].toString(); }catch (e) { logger.error(e);  mapping = &apos;&apos;;}channelMap.put(&apos;_msg_type&apos;, validate( mapping , &apos;&apos;, new Array()));</script>
+            <type>Mapper</type>
+            <data class="map">
+              <entry>
+                <string>Variable</string>
+                <string>_msg_type</string>
+              </entry>
+              <entry>
+                <string>DefaultValue</string>
+                <string></string>
+              </entry>
+              <entry>
+                <string>Mapping</string>
+                <string>msg[&apos;MSH&apos;][&apos;MSH.9&apos;][&apos;MSH.9.1&apos;].toString() + &quot;^&quot; + msg[&apos;MSH&apos;][&apos;MSH.9&apos;][&apos;MSH.9.2&apos;].toString()</string>
+              </entry>
+              <entry>
+                <string>RegularExpressions</string>
+                <list/>
+              </entry>
+              <entry>
+                <string>isGlobal</string>
+                <string>channel</string>
+              </entry>
+            </data>
+          </com.webreach.mirth.model.Step>
+          <com.webreach.mirth.model.Step>
+            <sequenceNumber>1</sequenceNumber>
+            <name>HL72Silicon</name>
+            <script>//Convierte el HL7-XML v2.3 en HL7-XML v.2.5 para enviar a Silicon
+var procDir = globalMap.get(&quot;procDir&quot;);
+var originalFilename = channelMap.get(&quot;originalFilename&quot;);	
+
+var xmlSiliconMsg;
+var converter;
+
+try{
+	
+	converter = Packages.org.delfos.mirth.hie.HL72SiliconFactory.getHL72SiliconConverter($(&apos;_msg_type&apos;));
+	xmlSiliconMsg = converter.convert($(&apos;xmlMsg&apos;));	
+
+}catch(ex){ //Se utiliza el conversor por defecto
+	
+	var defaultConverter = Packages.org.delfos.mirth.hie.HL72SiliconFactory.DEFAULT;
+	converter = Packages.org.delfos.mirth.hie.HL72SiliconFactory.getHL72SiliconConverter(defaultConverter);
+	xmlSiliconMsg = converter.convert($(&apos;xmlMsg&apos;));	
+}
+
+channelMap.put(&quot;xmlSiliconMsg&quot;,xmlSiliconMsg);
+FileUtil.write(procDir + &quot;/&quot; + originalFilename + &quot;.silicon&quot;, false, xmlSiliconMsg);</script>
+            <type>JavaScript</type>
+            <data class="map">
+              <entry>
+                <string>Script</string>
+                <string>//Convierte el HL7-XML v2.3 en HL7-XML v.2.5 para enviar a Silicon
+var procDir = globalMap.get(&quot;procDir&quot;);
+var originalFilename = channelMap.get(&quot;originalFilename&quot;);	
+
+var xmlSiliconMsg;
+var converter;
+
+try{
+	
+	converter = Packages.org.delfos.mirth.hie.HL72SiliconFactory.getHL72SiliconConverter($(&apos;_msg_type&apos;));
+	xmlSiliconMsg = converter.convert($(&apos;xmlMsg&apos;));	
+
+}catch(ex){ //Se utiliza el conversor por defecto
+	
+	var defaultConverter = Packages.org.delfos.mirth.hie.HL72SiliconFactory.DEFAULT;
+	converter = Packages.org.delfos.mirth.hie.HL72SiliconFactory.getHL72SiliconConverter(defaultConverter);
+	xmlSiliconMsg = converter.convert($(&apos;xmlMsg&apos;));	
+}
+
+channelMap.put(&quot;xmlSiliconMsg&quot;,xmlSiliconMsg);
+FileUtil.write(procDir + &quot;/&quot; + originalFilename + &quot;.silicon&quot;, false, xmlSiliconMsg);</string>
+              </entry>
+            </data>
+          </com.webreach.mirth.model.Step>
+        </steps>
+        <inboundTemplate></inboundTemplate>
+        <outboundTemplate></outboundTemplate>
+        <inboundProtocol>HL7V2</inboundProtocol>
+        <outboundProtocol>XML</outboundProtocol>
+        <inboundProperties/>
+        <outboundProperties/>
+      </transformer>
+      <filter>
+        <rules/>
+      </filter>
+      <transportName>File Writer</transportName>
+      <mode>DESTINATION</mode>
+      <enabled>true</enabled>
+    </com.webreach.mirth.model.Connector>
+  </destinationConnectors>
+  <properties>
+    <property name="synchronous">true</property>
+    <property name="removeNamespace">true</property>
+    <property name="transactional">false</property>
+    <property name="initialState">stopped</property>
+    <property name="dont_store_filtered">false</property>
+    <property name="error_messages_only">false</property>
+    <property name="max_message_age">21</property>
+    <property name="store_messages">true</property>
+    <property name="encryptData">false</property>
+  </properties>
+  <preprocessingScript>return message;</preprocessingScript>
+  <postprocessingScript>var siliconWS = responseMap.get(&quot;SiliconWS&quot;);
+var controller = globalMap.get(&quot;controller&quot;);
+var procDir = globalMap.get(&quot;procDir&quot;);
+
+//Si no se ha filtrado el mensaje y se ha enviado a Silicon
+if (siliconWS != null &amp;&amp; siliconWS.getStatus() == &quot;SUCCESS&quot;){ //El mensaje se ha enviado a Silicon
+	
+	
+	var sendDir = globalMap.get(&quot;sendDir&quot;);	
+	var hookFile = globalMap.get(&quot;hookFile&quot;).toString();
+	var originalFilename = channelMap.get(&quot;originalFilename&quot;);	
+
+	//Copia los mensajes HL7 generados en el directorio de enviados
+	Packages.org.delfos.mirth.utils.MirthFileUtils.moveFileToDirectory(procDir + &quot;/&quot; + originalFilename, sendDir);	
+	Packages.org.delfos.mirth.utils.MirthFileUtils.moveFileToDirectory(procDir + &quot;/&quot; + originalFilename + &quot;.xml&quot;, sendDir);	
+	Packages.org.delfos.mirth.utils.MirthFileUtils.moveFileToDirectory(procDir + &quot;/&quot; + originalFilename + &quot;.silicon&quot;, sendDir);	
+	
+}else if (siliconWS != null){ //Si no se ha filtrado el mensaje pero no se ha podido enviar a Silicon
+	controller.addError(controller.getCounter());
+}
+
+try{
+	controller.next();
+}catch(e){
+	controller.processMessages();
+}
+
+//Elimina los ficheros no válidos del directorio de procesado de ficheros
+var validFileExts = [globalMap.get(&quot;admFilesExt&quot;), globalMap.get(&quot;hookFileExt&quot;)];
+Packages.org.delfos.mirth.utils.MirthFileUtils.purgeDirectory(procDir, validFileExts);	
+
+return;</postprocessingScript>
+  <deployScript>//Parametrización del controlador del canal
+
+//Directorio donde admisiones deja los ficheros HL7
+var srcDir = &quot;E:/novale&quot;;
+
+//Directorio de procesado de ficheros HL7
+var procDir = &quot;E:/novale/procdir&quot;;
+globalMap.put(&quot;procDir&quot;, procDir);
+
+//Extensión de los ficheros de admisiones
+var admFilesExt = &quot;ADM&quot;;
+globalMap.put(&quot;admFilesExt&quot;, admFilesExt);
+
+//Directorio donde se encuentra el fichero anzuelo
+var hookDir = &quot;E:/novale/hookdir&quot;;
+
+//Fichero anzuelo. No puede tener la extensión &quot;ADM&quot; y ha de ser un HL7 válido
+var hookFile = &quot;file.hook&quot;;
+globalMap.put(&quot;hookFile&quot;, hookFile);
+
+//Extensión del fichero anzuelo
+var hookFileExt = &quot;hook&quot;;
+globalMap.put(&quot;hookFileExt&quot;, hookFileExt);
+
+//Directorio donde se dejan los mensajes enviados a Silicon
+var sendDir = &quot;E:/novale/sendDir&quot;;
+globalMap.put(&quot;sendDir&quot;, sendDir);
+
+//Instancia del controlador del canal
+var controller = new Packages.org.delfos.mirth.utils.HIEMessagesController(srcDir, procDir, hookDir + &quot;/&quot; + hookFile, 4);
+
+//Se arranca el procesado de mensajes
+controller.processMessages();
+
+//Añade la instancia del controllador
+globalMap.put(&quot;controller&quot;,controller);
+
+//Se arranca la tarea de limpieza de ficheros
+var springConfFile = &quot;E:/aplicaciones/mirth/conf/custom/spring_mirth_hie.xml&quot;;
+var springContext = new Packages.org.springframework.context.support.FileSystemXmlApplicationContext(springConfFile);
+
+globalMap.put(&quot;springContextFile&quot;, springContext);
+
+
+return;</deployScript>
+  <shutdownScript>var springContextFile = globalMap.get(&apos;springContextFile&apos;);
+
+springContextFile.close();
+
+return;</shutdownScript>
+</com.webreach.mirth.model.Channel>
