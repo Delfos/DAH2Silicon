@@ -1,0 +1,5 @@
+T.01. CORREGUIR EL MENSAJE A02 GENERADO PARA SILICON
+----------------------------------------------------
+
+En la plantilla xsl que trasforma el segmento PV1 del mensaje de admisiones, falta el declarar el segmento PV1.6,
+necesario para los mensajes A02.
