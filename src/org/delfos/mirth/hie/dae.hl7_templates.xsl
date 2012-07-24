@@ -75,7 +75,19 @@
 				<xsl:call-template name="patient_class">
 					<xsl:with-param name="dae_patient_class" select="PV1.2" />
 				</xsl:call-template>
-			</PV1.2>
+			</PV1.2>			
+			<PV1.3>
+				<!-- TODO - Pendiente de resolver: http://localhost/show_bug.cgi?id=8 -->
+				<xsl:copy-of select="PV1.3/PL.1"/>
+				<!-- TODO - Pendiente de resolver: http://localhost/show_bug.cgi?id=9 -->
+				<PL.3>
+					<xsl:call-template name="patient_bed" >
+						<xsl:with-param name="room" select="PV1.3/PL.2"/>
+						<xsl:with-param name="bed" select="PV1.3/PL.3"/>
+					</xsl:call-template>
+				</PL.3>
+			</PV1.3>
+			
 		
 		</PV1>
 	

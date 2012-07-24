@@ -53,11 +53,22 @@
 			<xsl:when test="O">
 				<xsl:text>A</xsl:text>
 			</xsl:when>
-			<!-- En caso de no reconocer el tipo de ingreso de DAE, se hace un ingreso hospitalario del paciente -->
+			<!-- En caso de no reconocer el tipo de ingr -->
 			<xsl:otherwise>
 				<xsl:text>I</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
 	
 	</xsl:template>
+	
+	<!-- Obtiene la cama del ingreso en el formato de Silicon -->
+	<!-- TODO - Pendiente de resolver: http://localhost/show_bug.cgi?id=9, para la implementación definitiva -->
+	<xsl:template name="patient_bed">
+		<xsl:param name="room" />
+		<xsl:param name="bed" />
+	
+		<xsl:text><xsl:value-of select="$room"/></xsl:text><xsl:text>-</xsl:text><xsl:text><xsl:value-of select="$bed" /></xsl:text>
+	
+	</xsl:template>
+
 </xsl:stylesheet>
