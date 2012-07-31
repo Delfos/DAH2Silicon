@@ -17,6 +17,9 @@
 			<PV1>
 				<xsl:apply-templates select = "PV1" />
 			</PV1>
+			<DG1>
+				<xsl:apply-templates select = "DG1"/>
+			</DG1>
 		</ADT_A01>
 	</xsl:template>
 </xsl:stylesheet>

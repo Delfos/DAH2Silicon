@@ -39,6 +39,32 @@
 		</xsl:text>		
 	</xsl:template>
 	
+	<xsl:template name="patient_sex">
+		<xsl:param name="sex" />
+		
+		<xsl:choose>
+			<xsl:when test="$sex=A">
+				<xsl:text>A</xsl:text>
+			</xsl:when>
+			<xsl:when test="$sex=F">
+				<xsl:text>F</xsl:text>
+			</xsl:when>		
+			<xsl:when test="$sex=M">
+				<xsl:text>M</xsl:text>
+			</xsl:when>		
+			<xsl:when test="$sex=N">
+				<xsl:text>N</xsl:text>
+			</xsl:when>		
+			<xsl:when test="$sex=O">
+				<xsl:text>O</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>U</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+		
+	</xsl:template>
+	
 	<!-- Obtiene el tipo de ingreso del paciente para Silicon -->
 	<xsl:template name="patient_class">
 		<xsl:param name="dae_patient_class"/>
@@ -53,21 +79,29 @@
 			<xsl:when test="O">
 				<xsl:text>A</xsl:text>
 			</xsl:when>
-			<!-- En caso de no reconocer el tipo de ingr -->
+			<!-- En caso de no reconocer el tipo de ingreso se hace un ingreso hospitalario -->
 			<xsl:otherwise>
 				<xsl:text>I</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
 	
+	</xsl:template>	
+
+	<!-- Obtiene el hospital de Silicon a partir del código de hospital enviado por DAE -->
+	<xsl:template name="hospital">
+		<xsl:param name="hospital_code" select='1' />		
+		<xsl:text><xsl:value-of select="$hospital_code"></xsl:value-of></xsl:text>	
 	</xsl:template>
 	
-	<!-- Obtiene la cama del ingreso en el formato de Silicon -->
-	<!-- TODO - Pendiente de resolver: http://localhost/show_bug.cgi?id=9, para la implementación definitiva -->
-	<xsl:template name="patient_bed">
-		<xsl:param name="room" />
-		<xsl:param name="bed" />
-	
-		<xsl:text><xsl:value-of select="$room"/></xsl:text><xsl:text>-</xsl:text><xsl:text><xsl:value-of select="$bed" /></xsl:text>
+	<!-- Obtiene el nombre completo del médico enviado por DAE -->
+	<xsl:template name="doctor_full_name">
+		<xsl:param name="name"/>
+		<xsl:param name="first_surname"/>
+		<xsl:param name="second_surname"/>
+		
+		<xsl:text><xsl:value-of select="$name"/></xsl:text><xsl:text> </xsl:text>
+		<xsl:text><xsl:value-of select="$first_surname"/></xsl:text><xsl:text> </xsl:text>
+		<xsl:text><xsl:value-of select="$second_surname"/></xsl:text>
 	
 	</xsl:template>
 
