@@ -9,8 +9,7 @@
 		<ADT_A01>
 			<MSH>
 				<xsl:apply-templates  select = "MSH" />
-			</MSH>				
-			<xsl:apply-templates  select = "EVN" />
+			</MSH>
 			<PID>
 				<xsl:apply-templates  select = "PID" />
 			</PID>

@@ -104,5 +104,21 @@
 		<xsl:text><xsl:value-of select="$second_surname"/></xsl:text>
 	
 	</xsl:template>
+	
+	<!-- Obtiene el código del médico. Cuando el mensaje es de tipo ADT_A03 el código se envía vacío -->
+	<xsl:template name="doctor_code">
+		<xsl:param name="message_type"/>
+		<xsl:param name="code"/>
+		
+		<xsl:choose>
+			<xsl:when test="$message_type!='A03'">
+				<xsl:text><xsl:value-of select="$code"/></xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text></xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+						
+	</xsl:template>
 
 </xsl:stylesheet>

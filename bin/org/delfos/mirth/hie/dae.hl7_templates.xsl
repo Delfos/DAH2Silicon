@@ -6,6 +6,8 @@
 	<xsl:import href="dae-silicon_bed_mapping.xsl"/>
 	<xsl:import href="dae-silicon_services_mapping.xsl"/>
 	
+	<xsl:variable name="message_type" select="//MSH/MSH.9/MSG.2"/>
+	
 	<xsl:template match = "MSH">
 		<!-- Sistema que genera el mensaje -->
 		<MSH.3>
@@ -23,7 +25,10 @@
 		<MSH.6>
 			<HD.1>1</HD.1>
 		</MSH.6>
-		<xsl:copy-of select="MSH.9" />
+		<MSH.9>
+			<xsl:copy-of select="MSH.9/MSG.1"/>
+			<xsl:copy-of select="MSH.9/MSG.2"/>
+		</MSH.9>		
 		<xsl:copy-of select="MSH.10" />
 	</xsl:template>
 	
@@ -90,10 +95,29 @@
 					<xsl:call-template name="hospital" />
 				</HD.1>
 			</PL.4>
-		</PV1.3>			
+		</PV1.3>
+		<PV1.6>
+			<!-- TODO - Pendiente de resolver: http://localhost/show_bug.cgi?id=8 -->
+			<xsl:copy-of select="PV1.6/PL.1"/>
+			<PL.3>
+				<xsl:call-template name="patient_bed" >
+					<xsl:with-param name="bed" select="PV1.6/PL.3"/>
+				</xsl:call-template>				
+			</PL.3>
+			<PL.4>
+				<HD.1>
+					<xsl:call-template name="hospital" />
+				</HD.1>
+			</PL.4>
+		</PV1.6>			
 		<PV1.7>
 			<!-- TODO - mapear el valor enviado por DAE al esperado por Silicon -->
-			<xsl:copy-of select="PV1.7/XCN.1"/>
+			<XCN.1>
+				<xsl:call-template name="doctor_code">
+					<xsl:with-param name="message_type" select="$message_type"/>
+					<xsl:with-param name="code" select="PV1.7/XCN.1"/>
+				</xsl:call-template>
+			</XCN.1>
 			<XCN.2>
 				<xsl:call-template name="doctor_full_name">
 					<xsl:with-param name="name" select="PV1.7/XCN.3"/>
@@ -113,6 +137,9 @@
 		<PV1.44>
 			<xsl:copy-of select="PV1.44/TS.1"/>
 		</PV1.44>
+		<PV1.45>
+			<xsl:copy-of select="PV1.45/TS.1"/>
+		</PV1.45>		
 	</xsl:template>
 	
 	<xsl:template match="DG1">		

@@ -5,20 +5,18 @@
 	<xsl:import href="dae.hl7_templates.xsl"/>
 	<xsl:output method="xml" indent="yes" />
 
-	<xsl:template match="/ADT_A01">
-		<ADT_A01>
+	<!-- DAE trata los A11 como submensajes ADT_A09 -->
+	<xsl:template match="/ADT_A09">
+		<ADT_A11>
 			<MSH>
 				<xsl:apply-templates  select = "MSH" />
-			</MSH>
+			</MSH>			
 			<PID>
 				<xsl:apply-templates  select = "PID" />
 			</PID>
 			<PV1>
 				<xsl:apply-templates select = "PV1" />
 			</PV1>
-			<DG1>
-				<xsl:apply-templates select = "DG1"/>
-			</DG1>
-		</ADT_A01>
+		</ADT_A11>
 	</xsl:template>
 </xsl:stylesheet>
