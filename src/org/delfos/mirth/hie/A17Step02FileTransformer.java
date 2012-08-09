@@ -175,8 +175,8 @@ public class A17Step02FileTransformer extends A17FileTransformer {
 	public static void main(String[] args) throws Exception{
 		
 		
-		File hl7File = new File("e:/novale/ADT0000117.ADM");
-		File result = new File("e:/novale/result.txt");		
+		File hl7File = new File("e:/tmp/1344440074853_A17.ADM");
+		File result = new File("e:/tmp/result.txt");		
 		
 		FileInputStream fis = new FileInputStream(hl7File);
 		FileOutputStream fos = new FileOutputStream(result);		

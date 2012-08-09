@@ -108,6 +108,7 @@ public class HIEMessagesController implements HL7MessagesController {
 		
 		typeList.add("ADT-A01");
 		typeList.add("ADT-A02");
+		typeList.add("ADT-A12");
 		typeList.add("ADT-A03");
 		typeList.add("ADT-A08");
 		typeList.add("ADT-A11");

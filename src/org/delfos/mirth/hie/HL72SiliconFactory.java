@@ -31,13 +31,14 @@ public class HL72SiliconFactory {
 		HL72SiliconConverter A11Converter = new A11HL72SiliconConverter();
 		HL72SiliconConverter A13Converter = new A13HL72SiliconConverter();
 		HL72SiliconConverter A02Converter = new A02HL72SiliconConverter();
+		HL72SiliconConverter A12Converter = new A12HL72SiliconConverter();
 		HL72SiliconConverter A08Converter = new A08HL72SiliconConverter();
 		
 		convertes.put("ADT^A01", A01Converter);
 		convertes.put("ADT^A03", A03Converter);
 		convertes.put("ADT^A11", A11Converter);
 		convertes.put("ADT^A02", A02Converter);
-		convertes.put("ADT^A12", defaultConverter);		
+		convertes.put("ADT^A12", A12Converter);		
 		convertes.put("ADT^A13", A13Converter);
 		convertes.put("ADT^A08", A08Converter);
 		convertes.put("ADT^A18", defaultConverter);

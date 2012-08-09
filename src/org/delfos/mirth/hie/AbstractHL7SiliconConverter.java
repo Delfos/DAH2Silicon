@@ -31,7 +31,8 @@ public abstract class AbstractHL7SiliconConverter implements HL72SiliconConverte
 	static final String A03_TRANSFORMER = "a03.transformer";
 	static final String A11_TRANSFORMER = "a11.transformer";
 	static final String A13_TRANSFORMER = "a13.transformer";
-	static final String A02_TRANSFORMER = "a12.transformer";
+	static final String A02_TRANSFORMER = "a02.transformer";
+	static final String A12_TRANSFORMER = "a12.transformer";
 	static final String A08_TRANSFORMER = "a08.transformer";
 	
 	private static DocumentBuilder docBuilder;
@@ -46,22 +47,25 @@ public abstract class AbstractHL7SiliconConverter implements HL72SiliconConverte
 		
 		//Hojas de estilos XSLT		
 		
-		InputStream A01XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("hl7_adt_a01.xsl");		
+		InputStream A01XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("dae.hl7_adt_a01.xsl");		
 		Source A01XsltSource = new StreamSource(A01XsltIs);
 		
-		InputStream A03XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("hl7_adt_a03.xsl");
+		InputStream A03XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("dae.hl7_adt_a03.xsl");
 		Source A03XsltSource = new StreamSource(A03XsltIs);
 		
-		InputStream A11XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("hl7_adt_a11.xsl");
+		InputStream A11XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("dae.hl7_adt_a11.xsl");
 		Source A11XsltSource = new StreamSource(A11XsltIs);
 		
-		InputStream A13XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("hl7_adt_a13.xsl");
+		InputStream A13XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("dae.hl7_adt_a13.xsl");
 		Source A13XsltSource = new StreamSource(A13XsltIs);
 		
-		InputStream A02XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("hl7_adt_a02.xsl");
+		InputStream A02XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("dae.hl7_adt_a02.xsl");
 		Source A02XsltSource = new StreamSource(A02XsltIs);
 		
-		InputStream A08XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("hl7_adt_a08.xsl");
+		InputStream A12XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("dae.hl7_adt_a12.xsl");
+		Source A12XsltSource = new StreamSource(A12XsltIs);		
+		
+		InputStream A08XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("dae.hl7_adt_a08.xsl");
 		Source A08XsltSource = new StreamSource(A08XsltIs);				
 		
 		try{
@@ -85,6 +89,10 @@ public abstract class AbstractHL7SiliconConverter implements HL72SiliconConverte
 			Transformer A02Trans = transFact.newTransformer(A02XsltSource);
 			transformers.put(A02_TRANSFORMER, A02Trans);
 			log.trace("Instancia del Transformer para mensajes ADT_A02: " + A02Trans);			
+			
+			Transformer A12Trans = transFact.newTransformer(A12XsltSource);
+			transformers.put(A12_TRANSFORMER, A12Trans);
+			log.trace("Instancia del Transformer para mensajes ADT_A12: " + A12Trans);			
 			
 			Transformer A08Trans = transFact.newTransformer(A08XsltSource);
 			transformers.put(A08_TRANSFORMER, A08Trans);
@@ -147,7 +155,7 @@ public abstract class AbstractHL7SiliconConverter implements HL72SiliconConverte
 	
 	public static void main(String[] args) throws Exception{
 		
-		String resource = AbstractHL7SiliconConverter.class.getResource("hl7_adt_a01.xsl").toString();
+		String resource = AbstractHL7SiliconConverter.class.getResource("dae.hl7_adt_a01.xsl").toString();
 		
 		//String resource = Thread.currentThread().getContextClassLoader().getResource(
 				//"hl7_adt_a01.xsl").toString();

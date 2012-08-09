@@ -185,12 +185,12 @@ public abstract class A17FileTransformer implements FileTransformer {
 			
 			log.info("Message parser correctly");			
 			
-			ADT_A17 adt_a17 = (ADT_A17)hl7Msg;
+			//ADT_A17 adt_a17 = (ADT_A17)hl7Msg;
 			
 			//Create the ADT_A02 message
 			ADT_A02 adt_a02 = new ADT_A02();
 			
-			Terser a17Terser = new Terser(adt_a17);
+			Terser a17Terser = new Terser(hl7Msg);
 			Terser a02Terser = new Terser(adt_a02);			
 			
 			this.copyMSH(a17Terser, a02Terser);
@@ -270,17 +270,20 @@ public abstract class A17FileTransformer implements FileTransformer {
 	/**
 	 * This is necessary because the ADT_A17 we received don't have standard behavior.
 	 * This is a shoddy piece of work :(.
+	 * NOTE: con los mensajes de DAE no es necesario este método
 	 */
 	private String msgPreprocesor(String msg){
 		
-		String[] msgLines = msg.split("\n");
+		//String[] msgLines = msg.split(System.getProperty("line.separator"));
 		
-		log.debug("Original ADT_A17 message: \n" + msg);
+		//log.debug("Original ADT_A17 message: \n" + msg);
 		
-		String validMsg = msgLines[0] + "\n" + msgLines[1] + "\n" + msgLines[2] + "\n" +
-			msgLines[4] + "\n" + msgLines[3] + "\n" + msgLines[5];
+		//String validMsg = msgLines[0] + "\n" + msgLines[1] + "\n" + msgLines[2] + "\n" +
+			//msgLines[4] + "\n" + msgLines[3] + "\n" + msgLines[5];
 		
-		log.debug("Valid ADT_A17 message: \n" + validMsg);
+		//log.debug("Valid ADT_A17 message: \n" + validMsg);
+		
+		String validMsg = msg;
 		
 		return validMsg;		
 		
