@@ -235,6 +235,8 @@ public abstract class A17FileTransformer implements FileTransformer {
 				dest.set(spec, "ADT");
 			}else if(spec.equals("MSH-9-2")){
 				dest.set(spec, "A02");
+			}else if(spec.equals("MSH-9-3")){
+				dest.set(spec, "ADT_A02");
 			}else{			
 				dest.set(spec, src.get(spec));
 			}
@@ -270,7 +272,7 @@ public abstract class A17FileTransformer implements FileTransformer {
 	/**
 	 * This is necessary because the ADT_A17 we received don't have standard behavior.
 	 * This is a shoddy piece of work :(.
-	 * NOTE: con los mensajes de DAE no es necesario este método
+	 * NOTE: con los mensajes de DAE no es necesario este mï¿½todo
 	 */
 	private String msgPreprocesor(String msg){
 		
