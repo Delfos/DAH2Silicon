@@ -15,14 +15,14 @@ public class HL72SiliconFactory {
 	
 	private static final Logger log = Logger.getLogger(HL72SiliconConverter.class);
 	
-	//Devuelve la implementación por defecto  de la interfaz <code>HL7SiliconConverter</code>
+	//Devuelve la implementaciï¿½n por defecto  de la interfaz <code>HL7SiliconConverter</code>
 	public static final String DEFAULT = "default";
 	
 	private static Hashtable<String, HL72SiliconConverter> convertes;
 	
 	static{
 		
-		log.debug("Inicio creación HL72SiliconFactory");
+		log.debug("Inicio creaciï¿½n HL72SiliconFactory");
 		
 		convertes = new Hashtable<String, HL72SiliconConverter>(10);		
 		DefaultHL72SiliconConverter defaultConverter = new DefaultHL72SiliconConverter();
@@ -46,20 +46,19 @@ public class HL72SiliconFactory {
 		convertes.put("ADT^A52", defaultConverter);
 		convertes.put(DEFAULT, defaultConverter);
 		
-		log.debug("HL72SiliconFactory creada con éxito");
-		
+		log.debug("HL72SiliconFactory creada con ï¿½xito");		
 	}
 	
 	private HL72SiliconFactory(){};
 	
 	/**
-	 * Devuelve la instancia de la interfaz <code>HL72SiliconConverter</code> específica para la 
-	 * conversión del tipo de mensaje HL7 indicado.
+	 * Devuelve la instancia de la interfaz <code>HL72SiliconConverter</code> especï¿½fica para la 
+	 * conversiï¿½n del tipo de mensaje HL7 indicado.
 	 * 
-	 * @param msgType tipo de mensaje HL7. Los tipos válidos son: ADT^A01, ADT^A011, ADT^A02,
+	 * @param msgType tipo de mensaje HL7. Los tipos vï¿½lidos son: ADT^A01, ADT^A011, ADT^A02,
 	 * 		ADT^A12, ADT^A03, ADT^A13, ADT^A08, ADT^A18, ADT^A22 y ADT^A52.
 	 * @return Convertidor para el tipo de messaje indicado.
-	 * @throws IllegalArgumentException cuando el tipo de mensaje indicado no es válido.
+	 * @throws IllegalArgumentException cuando el tipo de mensaje indicado no es vï¿½lido.
 	 */
 	public static HL72SiliconConverter getHL72SiliconConverter(String msgType) 
 		throws IllegalArgumentException{
@@ -70,7 +69,7 @@ public class HL72SiliconFactory {
 		
 		if(result == null){
 			IllegalArgumentException ex = new IllegalArgumentException("El tipo de mensaje " + msgType + 
-				" no es válido");
+				" no es vï¿½lido");
 			
 			log.warn(ex);
 			

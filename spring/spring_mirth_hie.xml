@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!-- CONTROLADOR DE CANAL -->
+	
+	<bean id="messagesController" class="org.delfos.mirth.utils.HIEMessagesController">
+		<!-- Directorio de admisiones -->
+		<constructor-arg type="java.lang.String" value="E:/tmp"/>
+		<!-- Directorio de procesado -->
+		<constructor-arg type="java.lang.String" value="E:/tmp/procdir"/>
+		<!-- Fichero anzuelo -->
+		<constructor-arg type="java.lang.String" value="E:/tmp/hookdir/file.hook"/>		
+		<!-- Numero de ficheros que se procesan -->
+		<constructor-arg value="4"/>
+	</bean>	
+	
+	<!-- TAREA PROGRAMADA DE LIMPIEZA DE FICHEROS -->
+	
+	<bean id="outDir" class="java.io.File">
+		<constructor-arg type="java.lang.String" value="E:/tmp/senddir" />
+	</bean>
+	<!-- 
+	<bean id="dir1" class="java.io.File">
+		<constructor-arg type="java.lang.String" value="E:/novale/dir1" />
+	</bean>
+	<bean id="dir2" class="java.io.File">
+		<constructor-arg type="java.lang.String" value="E:/novale/dir2" />
+	</bean>
+	 -->
+
+	<bean id="fileGarbageCollector" class="org.delfos.task.FileGarbageCollector">
+		<property name="maxAge">
+			<bean class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+				<property name="staticField">
+					<value>org.delfos.task.FileGarbageCollector.ONE_YEAR</value>
+				</property>				
+			</bean>			
+		</property>
+		<property name="dirs">
+			<list>
+				<ref bean="outDir"/>
+				<!-- 
+				<ref bean="dir1"/>
+				<ref bean="dir2"/>
+				 -->
+			</list>
+		</property>
+	</bean>
+
+	<bean id="scheduledTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<!-- wait 1 seconds before starting repeated execution -->
+		<property name="delay" value="1000" />
+		<!-- run every 5 seconds -->
+		<property name="period" value="5000" />
+		<property name="timerTask" ref="fileGarbageCollector" />
+	</bean>
+	
+	<bean id="timerFactory" class="org.springframework.scheduling.timer.TimerFactoryBean">
+    <property name="scheduledTimerTasks">
+        <list>
+            <ref bean="scheduledTask" />
+        </list>
+    </property>
+</bean>
+	
+
+</beans>
+
