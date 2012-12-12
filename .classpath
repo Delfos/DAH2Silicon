@@ -13,5 +13,10 @@
 	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/org.springframework.asm-3.0.4.RELEASE.jar"/>
 	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/org.springframework.expression-3.0.4.RELEASE.jar"/>
 	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/hapi-0.5.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/commons-dbcp-1.2.2.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/org.springframework.jdbc-3.0.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/org.springframework.transaction-3.0.4.RELEASE.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/commons-pool-1.4.jar"/>
+	<classpathentry kind="lib" path="E:/Grifols/projects/java/mirth/lib/ojdbc14.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

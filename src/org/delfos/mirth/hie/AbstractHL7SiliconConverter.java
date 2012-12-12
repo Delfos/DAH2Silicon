@@ -13,10 +13,21 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
+import org.delfos.mirth.hie.dao.Bed;
+import org.delfos.mirth.hie.dao.JdbcBedDao;
+import org.delfos.mirth.hie.dao.JdbcNurseUnitDao;
+import org.delfos.mirth.hie.dao.JdbcServiceDao;
+import org.delfos.mirth.hie.dao.NurseUnit;
+import org.delfos.mirth.hie.dao.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 
 public abstract class AbstractHL7SiliconConverter implements HL72SiliconConverter {
@@ -34,10 +45,52 @@ public abstract class AbstractHL7SiliconConverter implements HL72SiliconConverte
 	static final String A02_TRANSFORMER = "a02.transformer";
 	static final String A12_TRANSFORMER = "a12.transformer";
 	static final String A08_TRANSFORMER = "a08.transformer";
+	static final String A40_TRANSFORMER = "a40.transformer";
+	
+	protected static XPathExpression xPathExpDAEBed;
+	protected static final String SILICON_BED_CODE = "silicon.bed.code";
+	
+	protected static XPathExpression xPathExpDAEOldBed;
+	protected static final String SILICON_OLD_BED_CODE = "silicon.old.bed.code";
+	
+	protected static XPathExpression xPathExpNurseUnit;
+	protected static final String SILICON_NURSE_UNIT = "silicon.nurse.unit";
+	
+	protected static XPathExpression xPathExpOldNurseUnit;
+	protected static final String SILICON_OLD_NURSE_UNIT = "silicon.old.nurse.unit";
+	
+	protected static XPathExpression xPathService;
+	protected static final String SILICON_SERVICE = "silicon.service";
+	
+	protected static XPathExpression xPathExpAdmitType;	
 	
 	private static DocumentBuilder docBuilder;
 	
-	// TODO - Tener en cuenta que la codificaci�n de caracteres tiene que ser UTF-8	
+	//Entorno para la compilación de expresiones XPath
+	protected static final XPath xPath = XPathFactory.newInstance().newXPath();
+	
+	//Accesos a base de datos de Silicon
+	private static JdbcBedDao jdbcBedDao;
+	private static JdbcServiceDao jdbcServiceDao;
+	private static JdbcNurseUnitDao jdbcNurseUnitDao;
+	
+	public static JdbcNurseUnitDao getJdbcNurseUnitDao() {
+		return jdbcNurseUnitDao;
+	}
+
+	public static void setJdbcNurseUnitDao(JdbcNurseUnitDao jdbcNurseUnit) {
+		AbstractHL7SiliconConverter.jdbcNurseUnitDao = jdbcNurseUnit;
+	}
+
+	public static JdbcServiceDao getJdbcServiceDao() {
+		return jdbcServiceDao;
+	}
+
+	public static void setJdbcServiceDao(JdbcServiceDao jdbcServiceDao) {
+		AbstractHL7SiliconConverter.jdbcServiceDao = jdbcServiceDao;
+	}
+
+	// TODO - Tener en cuenta que la codificaci�n de caracteres tiene que ser UTF-8	
 	static{
 		
 		TransformerFactory transFact = TransformerFactory.newInstance();
@@ -67,6 +120,10 @@ public abstract class AbstractHL7SiliconConverter implements HL72SiliconConverte
 		
 		InputStream A08XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("dae.hl7_adt_a08.xsl");
 		Source A08XsltSource = new StreamSource(A08XsltIs);				
+		
+		InputStream A40XsltIs = AbstractHL7SiliconConverter.class.getResourceAsStream("dae.hl7_adt_a40.xsl");
+		Source A40XsltSource = new StreamSource(A40XsltIs);				
+
 		
 		try{
 		
@@ -98,13 +155,25 @@ public abstract class AbstractHL7SiliconConverter implements HL72SiliconConverte
 			transformers.put(A08_TRANSFORMER, A08Trans);
 			log.trace("Instancia del Transformer para mensajes ADT_A08: " + A08Trans);
 			
-			
+			Transformer A40Trans = transFact.newTransformer(A40XsltSource);
+			transformers.put(A40_TRANSFORMER, A40Trans);
+			log.trace("Instancia del Transformer para mensajes ADT_A40: " + A40Trans);
+
 			//Se obtiene una instancia de DocumentBuilder
 			DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
 			fact.setNamespaceAware(false);
 			docBuilder = fact.newDocumentBuilder();
 			
 			log.trace("Instancia de DocumentBuilder: " + docBuilder);
+			
+			//Expresiones XPath
+			xPathExpDAEBed = xPath.compile("//PV1/PV1.3/PL.3");
+			xPathExpDAEOldBed = xPath.compile("//PV1/PV1.6/PL.3");
+			xPathExpNurseUnit = xPath.compile("//PV1/PV1.3/PL.1");
+			xPathExpOldNurseUnit = xPath.compile("//PV1/PV1.6/PL.1");
+			xPathService = xPath.compile("//PV1/PV1.10");
+			xPathExpAdmitType = xPath.compile("//PV1/PV1.2");
+			
 		
 		}catch(Exception ex){
 			throw new ExceptionInInitializerError(ex);			
@@ -139,6 +208,59 @@ public abstract class AbstractHL7SiliconConverter implements HL72SiliconConverte
 		
 	}	
 	
+	/**
+	 * Asigna los parámetros al transformador indicado.
+	 * @param node
+	 * @param transformer
+	 * @throws XPathExpressionException
+	 */
+	protected void setParameters(Node node, Transformer transformer) throws XPathExpressionException{
+	
+		//Código de la cama de DAE
+		String DAEBedCode = xPathExpDAEBed.evaluate(node);		
+		log.debug("Código de cama recibido desde DAE: " + DAEBedCode);
+		
+		String siliconBedCode = getSiliconBedCode(DAEBedCode);
+		log.debug("Correspondiente código de la cama de Silicon: " + siliconBedCode);
+		
+		//Código de la antigua cama de DAE
+		String DAEOldBedCode = xPathExpDAEOldBed.evaluate(node);	
+		log.debug("Código de la antigua cama recibido desde DAE: " + DAEOldBedCode);
+		
+		String siliconOldBedCode = getSiliconBedCode(DAEOldBedCode);
+		log.debug("Correspondiente códigode la antigua cama de silicon: " + siliconOldBedCode);
+
+		//Código de la unidad de enfermería de DAE
+		String DAENurseUnitCode = xPathExpNurseUnit.evaluate(node);
+		log.debug("Código de la unidad de enfermería recibida desde DAE: " + DAENurseUnitCode);
+		
+		String siliconNurseUnitCode = getSiliconNurseUnitCode(DAENurseUnitCode);
+		log.debug("Correspondiente código de la unidad de enfermería de Silicon: " + siliconNurseUnitCode);
+		
+		//Código de la antigua unidad de enfermería de DAE
+		String DAEOldNurseUnitCode = xPathExpOldNurseUnit.evaluate(node);
+		log.debug("Código de la antigua unidad de enfermería recibida desde DAE: " + DAEOldNurseUnitCode);
+		
+		String siliconOldNurseUnitCode = getSiliconNurseUnitCode(DAEOldNurseUnitCode);
+		log.debug("Correspondiente código de la antigua unidad de enfermería de Silicon: " + siliconOldNurseUnitCode);
+		
+		//Código del servicio
+		String DAEServiceCode = xPathService.evaluate(node);
+		log.debug("Código del servicio recibido desde DAE: " + DAEServiceCode);
+		
+		String siliconServiceCode = getSiliconServiceCode(DAEServiceCode);
+		log.debug("Correspondiente código del servicio de Silicon: " + siliconServiceCode);
+		
+		//Asignación del parámetros al transformador xml
+		//TODO - Obtener los códigos de Silicon
+		transformer.setParameter(SILICON_BED_CODE, siliconBedCode);
+		transformer.setParameter(SILICON_OLD_BED_CODE, siliconOldBedCode);
+		transformer.setParameter(SILICON_NURSE_UNIT, siliconNurseUnitCode);
+		transformer.setParameter(SILICON_OLD_NURSE_UNIT, siliconOldNurseUnitCode);
+		transformer.setParameter(SILICON_SERVICE, siliconServiceCode);
+		
+	}
+	
 	private static URIResolver getHIEURIResolver(){
 		
 		return new URIResolver(){
@@ -152,6 +274,72 @@ public abstract class AbstractHL7SiliconConverter implements HL72SiliconConverte
 		};
 		
 	}	
+	
+	//Establece el objeto de conexión a la vista de camas de Silicon
+	protected static void setJdbcBedDao(JdbcBedDao dao){		
+		jdbcBedDao = dao;		
+	}
+	
+	protected static JdbcBedDao getJdbcBedDao (){
+		return jdbcBedDao;
+	}
+	
+	//Obtiene el código de cama de Silicon a partir del código de cama de DAE
+	protected static String getSiliconBedCode(String daeBedCode){
+		
+		Bed siliconBed = jdbcBedDao.getBedByAltId(daeBedCode);
+		return siliconBed.getDescription();
+		
+	}	
+	
+	protected static String getSiliconServiceCode (String daeServiceCode){
+		
+		Service service = jdbcServiceDao.getServiceByAltId(daeServiceCode);
+		return service.getCode();
+	
+	}
+	
+	protected static String getSiliconNurseUnitCode (String daeNurseUnitCode){
+		
+		NurseUnit nurseUnit = jdbcNurseUnitDao.getNurseUnitByAltId(daeNurseUnitCode);
+		return nurseUnit.getCode();
+		
+	}
+	
+	/**
+	 * Devuelve <code>false</code> para los ingresos de Hospital de Día. Para el resto de ingresos devuelve 
+	 * <code>true</code>. 
+	 * 
+	 * @param admitType
+	 * @return
+	 */
+	protected boolean isValidAdmitType(String msg) throws IllegalArgumentException{
+		
+		try{
+		
+			log.debug("Mensaje. Validación del tipo de ingreso.");
+			
+			byte[] msgBytes = msg.getBytes("UTF-8");
+			ByteArrayInputStream bais = new ByteArrayInputStream(msgBytes);
+			Document doc = docBuilder.parse(bais);
+			DOMSource src = new DOMSource(doc);
+			
+			String admitType = xPathExpAdmitType.evaluate(src.getNode());
+			
+			log.debug("Mensaje. Tipo de ingreso: " + admitType);
+			
+			if(admitType.equals("H")){
+				return false;
+			}		
+			
+			return true;
+		
+		}catch(Exception ex){
+			log.error(ex);
+			throw new IllegalArgumentException(ex);
+		}
+		
+	}
 	
 	public static void main(String[] args) throws Exception{
 		

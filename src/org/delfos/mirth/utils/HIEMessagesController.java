@@ -21,6 +21,8 @@ import org.delfos.io.DefaultFileTransformer;
 import org.delfos.io.FTName;
 import org.delfos.io.FileTransformer;
 import org.delfos.io.FileTransformerFactory;
+import org.delfos.mirth.hie.A052A01FileTransformer;
+import org.delfos.mirth.hie.A052A11FileTransformer;
 import org.delfos.mirth.hie.A17Step01FileTransformer;
 import org.delfos.mirth.hie.A17Step02FileTransformer;
 
@@ -62,22 +64,27 @@ public class HIEMessagesController implements HL7MessagesController {
 	private File hookFile;
 	
 	/**
-	 * Número de ficheros procesados por el canal de Mirth
+	 * Nï¿½mero de ficheros procesados por el canal de Mirth
 	 */
 	private int counter;
 
 	/**
-	 * Número máximo de ficheros que se envían a procesar
+	 * Nï¿½mero mï¿½ximo de ficheros que se envï¿½an a procesar
 	 */
 	private int maxFiles;
 	
 	/**
-	 * Número de mensajes que procesa el canal
+	 * Nï¿½mero de mensajes que procesa el canal
 	 */
 	private int actualFiles;
 	
 	/**
-	 * Tipos de mensajes válidos
+	 * Indica si el mensaje tiene que ser filtrado por el canal
+	 */
+	private boolean isFilter;
+	
+	/**
+	 * Tipos de mensajes vï¿½lidos
 	 */
 	private static List<String> typeList;
 	
@@ -98,6 +105,7 @@ public class HIEMessagesController implements HL7MessagesController {
 	
 	private static final String[] hl7Specs = {"MSH-9-2"};
 	
+	private static final String ADT_A05 = "A28";
 	private static final String ADT_A17 = "A17";
 	private static final String DEFAULT = "default";
 	
@@ -112,21 +120,23 @@ public class HIEMessagesController implements HL7MessagesController {
 		typeList.add("ADT-A03");
 		typeList.add("ADT-A08");
 		typeList.add("ADT-A11");
-		typeList.add("ADT-A13");		
-		
+		typeList.add("ADT-A13");	
+				
 		//TODO - Establecer en el parseador el juego de caracteres que se va a utilizar
 		parser = new PreParser();		
 		
 		//Build file transformer factory
 		Hashtable<String, FileTransformer[]> transformers = 
 			new Hashtable<String, FileTransformer[]>();
-			
-		
-		FileTransformer[] fts = {new DefaultFileTransformer(), new A17Step01FileTransformer(), 
+									
+		FileTransformer[] A05Fts = {new DefaultFileTransformer(), new A052A01FileTransformer(),
+				new A052A11FileTransformer()};			
+		FileTransformer[] A17Fts = {new DefaultFileTransformer(), new A17Step01FileTransformer(), 
 				new A17Step02FileTransformer()};
 		FileTransformer[] dft = {new DefaultFileTransformer()};
 		
-		transformers.put(ADT_A17, fts);
+		transformers.put(ADT_A05, A05Fts);		
+		transformers.put(ADT_A17, A17Fts);
 		transformers.put(DEFAULT, dft);
 		
 		ftf = FileTransformerFactory.getFileTransformerFactory(transformers);	
@@ -139,7 +149,7 @@ public class HIEMessagesController implements HL7MessagesController {
 	 * @param srcDir directorio donde admisiones deja los ficheros HL7
 	 * @param procDir directorio de procesado de ficheros HL7
 	 * @param hookFile fichero anzuelo para lanzar el canal del Mirth
-	 * @param maxFiles número máximo de ficheros que se envían a procesar 
+	 * @param maxFiles nï¿½mero mï¿½ximo de ficheros que se envï¿½an a procesar 
 	 */
 	public HIEMessagesController(String srcDir, String procDir, String hookFile, int maxFiles){
 		
@@ -161,6 +171,7 @@ public class HIEMessagesController implements HL7MessagesController {
 	public int next() throws NoSuchElementException {
 
 		this.counter = this.counter + 1;
+		this.setFilter(false);
 		
 		if(this.counter >= this.actualFiles)
 			throw new NoSuchElementException("No quedan elementos por procesar");
@@ -184,7 +195,7 @@ public class HIEMessagesController implements HL7MessagesController {
 	}
 
 	/**
-	 * Resetea los valores del controlador y actualiza el valor del número de ficheros que va a procesar el canal. En caso de que no haya ficheros
+	 * Resetea los valores del controlador y actualiza el valor del nï¿½mero de ficheros que va a procesar el canal. En caso de que no haya ficheros
 	 * para procesar en el directorio <code>procDir</code>, los mueve desde el directorio <code>srcDir</code>
 	 */
 	//TODO - new test cases
@@ -213,7 +224,9 @@ public class HIEMessagesController implements HL7MessagesController {
 			} catch (Exception e) {				
 				MessageControllerException ex = new MessageControllerException();
 				ex.initCause(e);
-				log.error("Error al procesar mensajes.", ex);
+				
+				log.error("Error al procesar mensajes.", ex);		
+				
 				throw ex;
 			}			 
 			
@@ -231,10 +244,10 @@ public class HIEMessagesController implements HL7MessagesController {
 	public boolean isValidType(String type){
 		
 		if(typeList.contains(type.toUpperCase())){
-			log.debug("El mensaje tipo: " + type + ", es válido");
+			log.debug("El mensaje tipo: " + type + ", es vï¿½lido");
 			return true;
 		}else{
-			log.debug("El mensaje tipo: " + type + ", no es válido");
+			log.debug("El mensaje tipo: " + type + ", no es vï¿½lido");
 			return false;
 		}		
 
@@ -252,7 +265,7 @@ public class HIEMessagesController implements HL7MessagesController {
 		filesNumber = filesNumber < 0 ? maxFilesNumber : filesNumber;		
 		int number = maxFilesNumber > filesNumber ? filesNumber : maxFilesNumber;		
 		
-		log.info("Ficheros que se envían a procesar: " + number);
+		log.info("Ficheros que se envÃ­an a procesar: " + number);
 		
 		for (int i = 0; i < number; i++){
 			
@@ -262,7 +275,8 @@ public class HIEMessagesController implements HL7MessagesController {
 				moveHL7File2Directory(file);
 			}catch(Exception ex){
 				log.error("Error durante el envio del fichero " + 
-						FilenameUtils.getName(file.getName()) +	"al directorio de procesamiento. ", ex);				
+						FilenameUtils.getName(file.getName()) +	"al directorio de procesamiento. ", ex);
+				return;
 			}
 			
 		}
@@ -287,15 +301,8 @@ public class HIEMessagesController implements HL7MessagesController {
 			
 			log.debug("Se envia a procesar mensaje tipo: " + hl7_type[0]);
 			
-			//The file is not a ADT_A17 message
-			if(hl7_type == null || !hl7_type[0].equals(ADT_A17)){						
-				
-				FileTransformer[] ft = ftf.getFileTransformers(DEFAULT);
-				
-				org.delfos.io.FileUtils.moveFile2Directory(file, procDir, fileName, ft[0]);				
-			
-			}else{ //The file is a ADT_A17 message
-				
+			if(hl7_type[0].equals(ADT_A17)){ //Mensaje A17
+
 				String baseFileName = FilenameUtils.getBaseName(file.getAbsolutePath());
 				String[] newFN = {fileName, baseFileName + "A02_01." + 
 						FilenameUtils.getExtension(fileName), baseFileName + "A02_02." + 
@@ -308,8 +315,30 @@ public class HIEMessagesController implements HL7MessagesController {
 				}
 				
 				org.delfos.io.FileUtils.copyFile2Directory(file, procDir, FTNames);
+			
 				
-			}		
+			} else if(hl7_type[0].equals(ADT_A05)){
+				
+				String baseFileName = FilenameUtils.getBaseName(file.getAbsolutePath());
+				String[] newFN = {fileName, baseFileName + "A05_A01." + 
+						FilenameUtils.getExtension(fileName), baseFileName + "A05_A11." + 
+						FilenameUtils.getExtension(fileName)};
+				FileTransformer[] fts = ftf.getFileTransformers(hl7_type[0]);
+				FTName[] FTNames = new FTName[newFN.length];;
+				
+				for(int i = 0; i < newFN.length; i++){
+					FTNames[i] = new FTName(newFN[i], fts[i]);
+				}
+				
+				org.delfos.io.FileUtils.copyFile2Directory(file, procDir, FTNames);							
+				
+			} else {						
+				
+				FileTransformer[] ft = ftf.getFileTransformers(DEFAULT);
+				
+				org.delfos.io.FileUtils.moveFile2Directory(file, procDir, fileName, ft[0]);				
+			
+			}
 			
 			log.info("Fichero " + fileName + " enviado al directorio de procesamiento.");
 			
@@ -325,6 +354,16 @@ public class HIEMessagesController implements HL7MessagesController {
 			
 		}
 
+	}
+
+
+	public boolean isFilter() {
+		return isFilter;
+	}
+
+
+	public void setFilter(boolean filter) {
+		isFilter = filter;
 	}
 
 }

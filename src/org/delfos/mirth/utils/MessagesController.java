@@ -26,24 +26,44 @@ public interface MessagesController {
 	/**
 	 * Indica al controlador que se va a procesar un nuevo mensaje.
 	 * 
-	 * @return número del mensaje que se va a procesar
+	 * @return nï¿½mero del mensaje que se va a procesar
 	 * @throws java.util.NoSuchElementException cuando no quedan mensajes que procesar
 	 */
 	public int next() throws NoSuchElementException;
 	
 	/**
-	 * Añade un mensaje con error al controlador.
+	 * Devuelve el Ã­ndice del mensaje que se estÃ¡ procesando.
+	 * @return
+	 */
+	public int getCounter();
+	
+	/**
+	 * Aï¿½ade un mensaje con error al controlador.
 	 * 
-	 * @param errorMsg número del mensaje que tiene el error
+	 * @param errorMsg nï¿½mero del mensaje que tiene el error
 	 */
 	public void addError(int errorMsg);
 	
 	/**
 	 * Obtiene los errores de los mensajes
 	 * 
-	 * @return números de los mensajes con error 
+	 * @return nï¿½meros de los mensajes con error 
 	 */
 	public Collection<Integer> getErrors();
+	
+	/**
+	 * Indica si el mensaje tiene que ser filtrado por el canal.
+	 * 
+	 * @return true si el mensaje tiene que ser filtrado por el canal.
+	 */
+	public boolean isFilter();
+	
+	/**
+	 * Establece el filtrado o no del mensaje.
+	 * 
+	 * @param filter true el mensaje tiene que ser filtrado
+	 */
+	public void setFilter(boolean filter);
 	
 	/**
 	 * El controlador prepara los mensajes para que sean procesados por el canal.

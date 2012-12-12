@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import org.delfos.io.DefaultFileTransformer;
 
 /**
- * Implementación por defecto de la interfaz MessagesController.
+ * Implementaciï¿½n por defecto de la interfaz MessagesController.
  * <P>
  * Admisiones deja los mensajes HL7 en un directorio <code>srcDir</code> y este controlador los va dejando por
  * bloques en un otro directorio <code>procDir</code> para que sean procesados por el canal.
@@ -40,27 +40,32 @@ public class BasicMessagesController implements HL7MessagesController {
 	private File hookFile;
 	
 	/**
-	 * Extensiones válidas para los ficheros de admisiones
+	 * Extensiones vï¿½lidas para los ficheros de admisiones
 	 */
 	private String[] exts;
 	
 	/**
-	 * Número de ficheros procesados por el canal de Mirth
+	 * Nï¿½mero de ficheros procesados por el canal de Mirth
 	 */
 	private int counter;
 
 	/**
-	 * Número máximo de ficheros que se envían a procesar
+	 * Nï¿½mero mï¿½ximo de ficheros que se envï¿½an a procesar
 	 */
 	private int maxFiles;
 	
 	/**
-	 * Número de mensajes que procesa el canal
+	 * Nï¿½mero de mensajes que procesa el canal
 	 */
 	private int actualFiles;
 	
 	/**
-	 * Tipos de mensajes válidos
+	 * Filtrado del mensaje.
+	 */
+	private boolean isFilter;
+	
+	/**
+	 * Tipos de mensajes vï¿½lidos
 	 */
 	//private static List<String> typeList;
 	
@@ -75,8 +80,8 @@ public class BasicMessagesController implements HL7MessagesController {
 	 * @param srcDir directorio donde admisiones deja los ficheros HL7
 	 * @param procDir directorio de procesado de ficheros HL7
 	 * @param hookFile ruta al fichero anzuelo para lanzar el canal del Mirth
-	 * @param exts estensión de los ficheros que se envían a procesar
-	 * @param maxFiles número máximo de ficheros que se envían a procesar 
+	 * @param exts estensiï¿½n de los ficheros que se envï¿½an a procesar
+	 * @param maxFiles nï¿½mero mï¿½ximo de ficheros que se envï¿½an a procesar 
 	 */
 	public BasicMessagesController(String srcDir, String procDir, String hookFile, String[] exts, int maxFiles){
 		
@@ -99,6 +104,7 @@ public class BasicMessagesController implements HL7MessagesController {
 	public int next() throws NoSuchElementException {
 
 		this.counter = this.counter + 1;
+		this.setFilter(false);
 		
 		if(this.counter >= this.actualFiles)
 			throw new NoSuchElementException("No quedan elementos por procesar");
@@ -125,7 +131,7 @@ public class BasicMessagesController implements HL7MessagesController {
 	 * Realiza las siguientes operaciones:
 	 * <ul>
 	 * 	<li>Resetea los valores del controlador</li>
-	 * 	<li>Actualiza el valor del número de ficheros que va a procesar el canal</li>
+	 * 	<li>Actualiza el valor del nï¿½mero de ficheros que va a procesar el canal</li>
 	 * 	<li>Copia el fichero anzuelo al directorio <code>procDir</code></li>
 	 *	<li>En caso de que no haya ficheros para procesar en el directorio <code>procDir</code>, los mueve desde el 
 	 *		directorio <code>srcDir</code>
@@ -172,7 +178,7 @@ public class BasicMessagesController implements HL7MessagesController {
 	}
 	
 	/**
-	 * No hace comprobaciones sobre el contenido del los ficheros que se envían a procesar.
+	 * No hace comprobaciones sobre el contenido del los ficheros que se envï¿½an a procesar.
 	 * 
 	 * @return Siempre devuelve true.
 	 */
@@ -189,11 +195,11 @@ public class BasicMessagesController implements HL7MessagesController {
 		
 		log.info("Ficheros pendientes de procesar: " + maxFilesNumber);
 		
-		//Si no se ha acotado el número de ficheros, se mueven todos
+		//Si no se ha acotado el nï¿½mero de ficheros, se mueven todos
 		filesNumber = filesNumber < 0 ? maxFilesNumber : filesNumber;		
 		int number = maxFilesNumber > filesNumber ? filesNumber : maxFilesNumber;		
 		
-		log.info("Ficheros que se envían a procesar: " + number);
+		log.info("Ficheros que se envï¿½an a procesar: " + number);
 		
 		DefaultFileTransformer ft = new DefaultFileTransformer();
 		
@@ -210,6 +216,16 @@ public class BasicMessagesController implements HL7MessagesController {
 			
 		}
 		
+	}
+
+
+	public boolean isFilter() {
+		return isFilter;
+	}
+
+
+	public void setFilter(boolean filter) {
+		isFilter = filter;		
 	}
 	
 

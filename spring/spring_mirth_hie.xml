@@ -4,6 +4,49 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+	<!-- ACCESO AL CONTEXTO DE SPRING PARA APLICACIONES EXTERNAS -->
+	<bean id="contextApplicationContextProvider" class="org.delfos.spring.ApplicationContextProvider"/>
+	
+	<!-- CONEXIÓN A LA BD DE SILICON -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@192.168.12.54:1521:gtora" />
+		<property name="username" value="hietest" />
+		<property name="password" value="Pamela" />
+		<property name="initialSize" value="5" />
+		<property name="maxActive" value="10" />
+		<property name="removeAbandonedTimeout" value="60" />
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
+		<constructor-arg ref="dataSource"/>
+	</bean>
+	
+	<bean id="jdbcBedDao" class="org.delfos.mirth.hie.dao.JdbcBedDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+
+	<bean id="jdbcServiceDao" class="org.delfos.mirth.hie.dao.JdbcServiceDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+
+	<bean id="jdbcNurseUnitDao" class="org.delfos.mirth.hie.dao.JdbcNurseUnitDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+	
+	<bean id="jdbcPatientDao" class="org.delfos.mirth.hie.dao.JdbcPatientDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
+
+	
+	<!-- FACTORIA DE CONVERSORES -->
+	
+	<bean id="hl72SiliconFactory" class="org.delfos.mirth.hie.HL72SiliconFactory">
+		<property name="jdbcBedDao" ref="jdbcBedDao"/>
+		<property name="jdbcServiceDao" ref="jdbcServiceDao"/>
+		<property name="jdbcNurseUnitDao" ref="jdbcNurseUnitDao"/>
+	</bean>
+	
 	<!-- CONTROLADOR DE CANAL -->
 	
 	<bean id="messagesController" class="org.delfos.mirth.utils.HIEMessagesController">
@@ -59,12 +102,12 @@
 	</bean>
 	
 	<bean id="timerFactory" class="org.springframework.scheduling.timer.TimerFactoryBean">
-    <property name="scheduledTimerTasks">
-        <list>
-            <ref bean="scheduledTask" />
-        </list>
-    </property>
-</bean>
+		<property name="scheduledTimerTasks">
+			<list>
+				<ref bean="scheduledTask" />
+			</list>
+		</property>
+	</bean>
 	
 
 </beans>

@@ -65,20 +65,36 @@
 		
 	</xsl:template>
 	
-	<!-- Obtiene el tipo de ingreso del paciente para Silicon -->
-	<xsl:template name="patient_class">
-		<xsl:param name="dae_patient_class"/>
+	<xsl:template name="message_type">
+		<xsl:param name="type"/>
 		
 		<xsl:choose>
-			<xsl:when test="E">
-				<xsl:text>U</xsl:text>
+			<xsl:when test="$type='A40'">
+				<xsl:text>A18</xsl:text>
 			</xsl:when>
-			<xsl:when test="I">
+			<xsl:otherwise>
+				<xsl:text><xsl:value-of select="$type"/></xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>		
+		
+	</xsl:template>
+	
+	<!-- Obtiene el tipo de ingreso del paciente para Silicon -->
+	<xsl:template name="patient_class">
+		<xsl:param name="dae_patient_class"/>		
+		<xsl:choose>
+			<xsl:when test="$dae_patient_class='1'">
 				<xsl:text>I</xsl:text>
 			</xsl:when>
-			<xsl:when test="O">
-				<xsl:text>A</xsl:text>
+			<xsl:when test="$dae_patient_class='2'">
+				<xsl:text>H</xsl:text>
 			</xsl:when>
+			<xsl:when test="$dae_patient_class='3'">
+				<xsl:text>U</xsl:text>
+			</xsl:when>
+			<xsl:when test="$dae_patient_class='4'">
+				<xsl:text>A</xsl:text>
+			</xsl:when>			
 			<!-- En caso de no reconocer el tipo de ingreso se hace un ingreso hospitalario -->
 			<xsl:otherwise>
 				<xsl:text>I</xsl:text>
@@ -89,27 +105,44 @@
 
 	<!-- Obtiene el hospital de Silicon a partir del código de hospital enviado por DAE -->
 	<xsl:template name="hospital">
-		<xsl:param name="hospital_code" select='1' />		
-		<xsl:text><xsl:value-of select="$hospital_code"></xsl:value-of></xsl:text>	
+		<xsl:param name="hospital_code" />		
+		<xsl:choose>
+			<xsl:when test="$hospital_code='10036'">
+				<xsl:text>1</xsl:text>
+			</xsl:when>
+			<xsl:when test="$hospital_code=''">
+				<xsl:text>1</xsl:text>
+			</xsl:when>
+			<!-- El paciente no es del Hospital Infanta Elena -->
+			<xsl:otherwise>
+				<xsl:text>-1</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+		<!-- <xsl:text><xsl:value-of select="$hospital_code"></xsl:value-of></xsl:text> -->	
 	</xsl:template>
 	
 	<!-- Obtiene el nombre completo del médico enviado por DAE -->
+	<!-- Devuelve el médico no definido porque Silicon no lo está creando al vuelo ??? -->
 	<xsl:template name="doctor_full_name">
 		<xsl:param name="name"/>
 		<xsl:param name="first_surname"/>
 		<xsl:param name="second_surname"/>
 		
-		<xsl:text><xsl:value-of select="$name"/></xsl:text><xsl:text> </xsl:text>
-		<xsl:text><xsl:value-of select="$first_surname"/></xsl:text><xsl:text> </xsl:text>
-		<xsl:text><xsl:value-of select="$second_surname"/></xsl:text>
-	
+		<xsl:value-of select="normalize-space($name)"/> 
+		<xsl:text> </xsl:text>
+		<xsl:value-of select="normalize-space($first_surname)"/> 
+		<xsl:text> </xsl:text>
+		<xsl:value-of select="normalize-space($second_surname)"/>
+				
 	</xsl:template>
 	
 	<!-- Obtiene el código del médico. Cuando el mensaje es de tipo ADT_A03 el código se envía vacío -->
+	<!-- Devuelve el médico no definido porque Silicon no lo está creando al vuelo ??? -->
 	<xsl:template name="doctor_code">
 		<xsl:param name="message_type"/>
 		<xsl:param name="code"/>
 		
+		<!--  <xsl:text>0</xsl:text> -->
 		<xsl:choose>
 			<xsl:when test="$message_type!='A03'">
 				<xsl:text><xsl:value-of select="$code"/></xsl:text>
@@ -118,6 +151,7 @@
 				<xsl:text></xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
+		
 						
 	</xsl:template>
 
