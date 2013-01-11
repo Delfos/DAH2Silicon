@@ -14,7 +14,7 @@ public class A03HL72SiliconConverter extends AbstractHL7SiliconConverter impleme
 
 	private static final Logger log = Logger.getLogger(A03HL72SiliconConverter.class);
 	
-	public String convert(String msg) throws IllegalArgumentException{
+	public String process(String msg) throws IllegalArgumentException{
 		
 		log.debug("Mensaje HL7-XML v2.3:\n" + msg);
 		

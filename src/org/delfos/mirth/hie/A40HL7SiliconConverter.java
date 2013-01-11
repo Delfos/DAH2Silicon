@@ -17,7 +17,7 @@ public class A40HL7SiliconConverter extends AbstractHL7SiliconConverter
 	
 	 
 	
-	public String convert(String msg) throws IllegalArgumentException{
+	public String process(String msg) throws IllegalArgumentException{
 		
 		log.debug("Mensaje HL7-XML v2.3:\n" + msg);
 		

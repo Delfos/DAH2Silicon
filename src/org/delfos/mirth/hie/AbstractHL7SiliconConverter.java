@@ -182,6 +182,14 @@ public abstract class AbstractHL7SiliconConverter implements HL72SiliconConverte
 	}
 	
 	/**
+	 * Obtiene el resultado de ejecutar el preprocesado, el procesado y el postprocesado.
+	 * 
+	 */
+	public String convert(String msg) throws IllegalArgumentException{
+		return postProcess(process(preProcess(msg)));
+	}
+	
+	/**
 	 * Elimina el namespace del mensaje. 
 	 */
 	protected Source dropNameSpace(String xmlMsg) throws IllegalArgumentException{
@@ -304,6 +312,52 @@ public abstract class AbstractHL7SiliconConverter implements HL72SiliconConverte
 		NurseUnit nurseUnit = jdbcNurseUnitDao.getNurseUnitByAltId(daeNurseUnitCode);
 		return nurseUnit.getCode();
 		
+	}
+	
+	/**
+	 * Preprocesado del mensaje.
+	 * 
+	 * @param msg mensaje original
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	protected String preProcess(String msg) throws IllegalArgumentException{
+		log.debug("Mensaje. Preprocesado por defecto.");
+		return msg;
+	}
+	
+	/**
+	 * Procesado del mensaje.
+	 * 
+	 * @param msg mensaje resultado del preprocesado.
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	protected String process(String msg) throws IllegalArgumentException{
+		log.debug("Mensaje. Procesado por defecto.");
+		return msg;
+	}
+	
+	/**
+	 * Postprocesado del mensaje.
+	 * 
+	 * Si el tipo de admisión del mensaje es hospital, descarta el mensaje.
+	 * 
+	 * @param msg mensaje resultado del procesado.
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	protected String postProcess(String msg) throws IllegalArgumentException{
+		
+		log.debug("Mensaje. Postprocesado por defecto.");
+		
+		if(!isValidAdmitType(msg)){
+			IllegalArgumentException ex = new IllegalArgumentException("ERROR-00. El tipo de ingreso no es válido");
+			log.warn(ex);
+			throw ex;
+		}
+		
+		return msg;
 	}
 	
 	/**
