@@ -22,6 +22,7 @@ public class HIEMessagesControllerTest extends TestCase {
 	private File srcDir = new File("E:/novale");
 	private File hookFile = new File("E:/novale/hookdir/file.hook");
 	private File procDir = new File("E:/novale/procdir");
+	private File errorDir = new File("E:/novale/errordir");
 	private File bakDir = new File("E:/novale/bak");
 
 	@Override
@@ -53,7 +54,7 @@ public class HIEMessagesControllerTest extends TestCase {
 	public void testProcessMessages_C1() {
 		
 		MessagesController controller = new HIEMessagesController(this.srcDir.getAbsolutePath(),
-				this.procDir.getAbsolutePath(),this.hookFile.getAbsolutePath(), 3);
+				this.procDir.getAbsolutePath(), this.errorDir.getAbsolutePath(), this.hookFile.getAbsolutePath(), 3);
 		
 		try {
 			controller.processMessages();

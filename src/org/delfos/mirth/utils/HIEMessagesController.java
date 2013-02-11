@@ -21,10 +21,12 @@ import org.delfos.io.DefaultFileTransformer;
 import org.delfos.io.FTName;
 import org.delfos.io.FileTransformer;
 import org.delfos.io.FileTransformerFactory;
+import org.delfos.mirth.hie.A02FileTransformer;
 import org.delfos.mirth.hie.A052A01FileTransformer;
 import org.delfos.mirth.hie.A052A11FileTransformer;
 import org.delfos.mirth.hie.A17Step01FileTransformer;
 import org.delfos.mirth.hie.A17Step02FileTransformer;
+import org.delfos.mirth.hie.tests.A02FileTransformerTest;
 
 import sun.security.krb5.internal.PAEncTSEnc;
 
@@ -57,6 +59,11 @@ public class HIEMessagesController implements HL7MessagesController {
 	 * Directorio de procesado de ficheros HL7
 	 */
 	private File procDir;
+	
+	/**
+	 * Directorio de mensajes de admisiones erroneos.
+	 */
+	private File errorDir;
 	
 	/**
 	 * Fichero anzuelo para lanzar el canal del Mirth
@@ -105,6 +112,7 @@ public class HIEMessagesController implements HL7MessagesController {
 	
 	private static final String[] hl7Specs = {"MSH-9-2"};
 	
+	private static final String ADT_A02 = "A02";
 	private static final String ADT_A05 = "A28";
 	private static final String ADT_A17 = "A17";
 	private static final String DEFAULT = "default";
@@ -129,12 +137,14 @@ public class HIEMessagesController implements HL7MessagesController {
 		Hashtable<String, FileTransformer[]> transformers = 
 			new Hashtable<String, FileTransformer[]>();
 									
+		FileTransformer[] A02Fts = {new A02FileTransformer()};
 		FileTransformer[] A05Fts = {new DefaultFileTransformer(), new A052A01FileTransformer(),
 				new A052A11FileTransformer()};			
 		FileTransformer[] A17Fts = {new DefaultFileTransformer(), new A17Step01FileTransformer(), 
 				new A17Step02FileTransformer()};
 		FileTransformer[] dft = {new DefaultFileTransformer()};
 		
+		transformers.put(ADT_A02, A02Fts);
 		transformers.put(ADT_A05, A05Fts);		
 		transformers.put(ADT_A17, A17Fts);
 		transformers.put(DEFAULT, dft);
@@ -148,13 +158,15 @@ public class HIEMessagesController implements HL7MessagesController {
 	 * 
 	 * @param srcDir directorio donde admisiones deja los ficheros HL7
 	 * @param procDir directorio de procesado de ficheros HL7
+	 * @param errorDir directorio donde se dejan los mensajes HL7 erroneos.
 	 * @param hookFile fichero anzuelo para lanzar el canal del Mirth
 	 * @param maxFiles n�mero m�ximo de ficheros que se env�an a procesar 
 	 */
-	public HIEMessagesController(String srcDir, String procDir, String hookFile, int maxFiles){
+	public HIEMessagesController(String srcDir, String procDir, String errorDir, String hookFile, int maxFiles){
 		
 		this.srcDir = new File(srcDir);
 		this.procDir = new File(procDir);
+		this.errorDir = new File(errorDir);
 		this.hookFile = new File(hookFile);
 		this.maxFiles = maxFiles;
 		this.counter = 0;
@@ -317,7 +329,7 @@ public class HIEMessagesController implements HL7MessagesController {
 				org.delfos.io.FileUtils.copyFile2Directory(file, procDir, FTNames);
 			
 				
-			} else if(hl7_type[0].equals(ADT_A05)){
+			} else if(hl7_type[0].equals(ADT_A05)){ //Mensaje A05
 				
 				String baseFileName = FilenameUtils.getBaseName(file.getAbsolutePath());
 				String[] newFN = {fileName, baseFileName + "A05_A01." + 
@@ -332,7 +344,22 @@ public class HIEMessagesController implements HL7MessagesController {
 				
 				org.delfos.io.FileUtils.copyFile2Directory(file, procDir, FTNames);							
 				
-			} else {						
+			} else if(hl7_type[0].equals(ADT_A02)){ //Mensaje A02
+				
+				String baseFileName = FilenameUtils.getBaseName(file.getAbsolutePath());
+				
+				String[] newFN = {baseFileName + "A02" + FilenameUtils.getExtension(fileName)};
+				FileTransformer[] fts = ftf.getFileTransformers(hl7_type[0]);
+				FTName[] FTNames = new FTName[newFN.length];
+				
+				for(int i = 0; i < newFN.length; i++){
+					FTNames[i] = new FTName(newFN[i], fts[i]);
+				}
+				
+				org.delfos.io.FileUtils.copyFile2Directory(file, procDir, FTNames);
+				org.delfos.io.FileUtils.moveFile2Directory(file, errorDir, fileName, ftf.getFileTransformers(DEFAULT)[0]);
+				
+			}else {						
 				
 				FileTransformer[] ft = ftf.getFileTransformers(DEFAULT);
 				
