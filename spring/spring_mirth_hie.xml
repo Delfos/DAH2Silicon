@@ -54,6 +54,8 @@
 		<constructor-arg type="java.lang.String" value="E:/tmp"/>
 		<!-- Directorio de procesado -->
 		<constructor-arg type="java.lang.String" value="E:/tmp/procdir"/>
+		<!-- Directorio de errores -->
+		<constructor-arg type="java.lang.String" value="E:/tmp/errorDir"/>
 		<!-- Fichero anzuelo -->
 		<constructor-arg type="java.lang.String" value="E:/tmp/hookdir/file.hook"/>		
 		<!-- Numero de ficheros que se procesan -->

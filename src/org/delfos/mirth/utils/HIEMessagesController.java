@@ -348,7 +348,7 @@ public class HIEMessagesController implements HL7MessagesController {
 				
 				String baseFileName = FilenameUtils.getBaseName(file.getAbsolutePath());
 				
-				String[] newFN = {baseFileName + "A02" + FilenameUtils.getExtension(fileName)};
+				String[] newFN = {baseFileName + "A02." + FilenameUtils.getExtension(fileName)};
 				FileTransformer[] fts = ftf.getFileTransformers(hl7_type[0]);
 				FTName[] FTNames = new FTName[newFN.length];
 				
