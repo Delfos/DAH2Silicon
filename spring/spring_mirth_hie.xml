@@ -37,6 +37,10 @@
 	<bean id="jdbcPatientDao" class="org.delfos.mirth.hie.dao.JdbcPatientDao">
 		<property name="jdbcTemplate" ref="jdbcTemplate"/>
 	</bean>
+	
+	<bean id="jdbcHospitalizePatientDao" class="org.delfos.mirth.hie.dao.JdbcHospitalizePatientDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate"/>
+	</bean>
 
 	
 	<!-- FACTORIA DE CONVERSORES -->
