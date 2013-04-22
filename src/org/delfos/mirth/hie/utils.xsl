@@ -91,12 +91,14 @@
 				<xsl:text>I</xsl:text>
 			</xsl:when>
 			<xsl:when test="$dae_patient_class='2'">
-				<xsl:if test="$beg=''">
-					<xsl:text>H</xsl:text>
-				</xsl:if>
-				<xsl:if test="$beg!=''">
-					<xsl:text>I</xsl:text>
-				</xsl:if>				
+				<xsl:choose>
+					<xsl:when test="$beg!=''">
+						<xsl:text>I</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:text>H</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>							
 			</xsl:when>
 			<xsl:when test="$dae_patient_class='3'">
 				<xsl:text>U</xsl:text>
