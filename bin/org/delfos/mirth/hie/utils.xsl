@@ -46,20 +46,11 @@
 		<xsl:param name="sex" />
 
 		<xsl:choose>
-			<xsl:when test="$sex=A">
-				<xsl:text>A</xsl:text>
-			</xsl:when>
-			<xsl:when test="$sex=F">
+			<xsl:when test="$sex=1">
 				<xsl:text>F</xsl:text>
 			</xsl:when>
-			<xsl:when test="$sex=M">
+			<xsl:when test="$sex=0">
 				<xsl:text>M</xsl:text>
-			</xsl:when>
-			<xsl:when test="$sex=N">
-				<xsl:text>N</xsl:text>
-			</xsl:when>
-			<xsl:when test="$sex=O">
-				<xsl:text>O</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>U</xsl:text>
